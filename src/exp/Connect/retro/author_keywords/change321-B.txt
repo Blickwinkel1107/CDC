@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE req SYSTEM "masterDTD.dtd">
+<req>
+<high id = "kW0-gov.hhs.fha.nhinc.patientdiscovery.entity-copy.EntityPatientDiscoveryOrchImpl" freeze = "Not Satisfied">
+<low id = "GATEWAY-1124"><weight change = "Default">0.17577</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.15680</weight></low>
+<low id = "GATEWAY-513"><weight change = "Default">0.07395</weight></low>
+<low id = "GATEWAY-839"><weight change = "Default">0.07159</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.07000</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.05963</weight></low>
+<low id = "GATEWAY-1242"><weight change = "Default">0.05796</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.05418</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.04237</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.04230</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.04174</weight></low>
+<low id = "GATEWAY-933"><weight change = "Default">0.02653</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.01802</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.01546</weight></low>
+<low id = "GATEWAY-514"><weight change = "Default">0.01512</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.00907</weight></low>
+</high>
+<high id = "kW0-gov.hhs.fha.nhinc.patientdiscovery.entity.EntityPatientDiscoveryOrchImpl" freeze = "Not Satisfied">
+<low id = "GATEWAY-1124"><weight change = "Default">0.17577</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.15680</weight></low>
+<low id = "GATEWAY-513"><weight change = "Default">0.07395</weight></low>
+<low id = "GATEWAY-839"><weight change = "Default">0.07159</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.07000</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.05963</weight></low>
+<low id = "GATEWAY-1242"><weight change = "Default">0.05796</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.05418</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.04237</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.04230</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.04174</weight></low>
+<low id = "GATEWAY-933"><weight change = "Default">0.02653</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.01802</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.01546</weight></low>
+<low id = "GATEWAY-514"><weight change = "Default">0.01512</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.00907</weight></low>
+</high>
+</req>

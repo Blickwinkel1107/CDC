@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE req SYSTEM "masterDTD.dtd">
+<req>
+<high id = "kW0-gov.hhs.fha.nhinc.docquery.passthru-copy.PassthruDocQueryOrchImpl" freeze = "Not Satisfied">
+<low id = "GATEWAY-1243"><weight change = "Default">0.23600</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.09485</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.06010</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.06000</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.05921</weight></low>
+<low id = "RMGMT-138"><weight change = "Default">0.05043</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.03456</weight></low>
+<low id = "GATEWAY-514"><weight change = "Default">0.02829</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.02638</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.02557</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.02502</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.02192</weight></low>
+<low id = "GATEWAY-326"><weight change = "Default">0.01945</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.01234</weight></low>
+</high>
+<high id = "kW0-gov.hhs.fha.nhinc.docquery.passthru.PassthruDocQueryOrchImpl" freeze = "Not Satisfied">
+<low id = "GATEWAY-1243"><weight change = "Default">0.23600</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.09485</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.06010</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.06000</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.05921</weight></low>
+<low id = "RMGMT-138"><weight change = "Default">0.05043</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.03456</weight></low>
+<low id = "GATEWAY-514"><weight change = "Default">0.02829</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.02638</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.02557</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.02502</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.02192</weight></low>
+<low id = "GATEWAY-326"><weight change = "Default">0.01945</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.01234</weight></low>
+</high>
+</req>

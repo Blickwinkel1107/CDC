@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!DOCTYPE req SYSTEM "masterDTD.dtd">
+<req>
+<high id = "kW0-gov.hhs.fha.nhinc.async.AddressingHeaderCreator" freeze = "Not Satisfied">
+<low id = "GATEWAY-848"><weight change = "Default">0.12853</weight></low>
+<low id = "GATEWAY-635"><weight change = "Default">0.09125</weight></low>
+<low id = "GATEWAY-840"><weight change = "Default">0.09103</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.09063</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.08289</weight></low>
+<low id = "GATEWAY-299"><weight change = "Default">0.05743</weight></low>
+<low id = "GATEWAY-1243"><weight change = "Default">0.05589</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.05469</weight></low>
+<low id = "GATEWAY-844"><weight change = "Default">0.05297</weight></low>
+<low id = "GATEWAY-839"><weight change = "Default">0.04907</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.04327</weight></low>
+<low id = "GATEWAY-438"><weight change = "Default">0.03922</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.03067</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.02971</weight></low>
+<low id = "GATEWAY-450"><weight change = "Default">0.01959</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.01086</weight></low>
+<low id = "GATEWAY-1359"><weight change = "Default">0.01030</weight></low>
+<low id = "GATEWAY-326"><weight change = "Default">0.00870</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.00394</weight></low>
+<low id = "GATEWAY-1124"><weight change = "Default">0.00338</weight></low>
+<low id = "GATEWAY-1121"><weight change = "Default">0.00336</weight></low>
+<low id = "GATEWAY-1047"><weight change = "Default">0.00318</weight></low>
+<low id = "GATEWAY-851"><weight change = "Default">0.00305</weight></low>
+<low id = "GATEWAY-1123"><weight change = "Default">0.00235</weight></low>
+<low id = "GATEWAY-853"><weight change = "Default">0.00229</weight></low>
+<low id = "GATEWAY-439"><weight change = "Default">0.00213</weight></low>
+<low id = "GATEWAY-440"><weight change = "Default">0.00212</weight></low>
+<low id = "GATEWAY-933"><weight change = "Default">0.00194</weight></low>
+<low id = "GATEWAY-843"><weight change = "Default">0.00162</weight></low>
+<low id = "GATEWAY-850"><weight change = "Default">0.00158</weight></low>
+<low id = "GATEWAY-852"><weight change = "Default">0.00127</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.00090</weight></low>
+</high>
+<high id = "kW1-gov.hhs.fha.nhinc.async.AsyncHeaderCreator" freeze = "Not Satisfied">
+<low id = "GATEWAY-848"><weight change = "Default">0.12302</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.10760</weight></low>
+<low id = "GATEWAY-840"><weight change = "Default">0.09551</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.08963</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.07924</weight></low>
+<low id = "GATEWAY-635"><weight change = "Default">0.07201</weight></low>
+<low id = "GATEWAY-839"><weight change = "Default">0.07175</weight></low>
+<low id = "GATEWAY-299"><weight change = "Default">0.06907</weight></low>
+<low id = "GATEWAY-844"><weight change = "Default">0.05351</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.04745</weight></low>
+<low id = "GATEWAY-1243"><weight change = "Default">0.04707</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.04003</weight></low>
+<low id = "GATEWAY-438"><weight change = "Default">0.03864</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.03577</weight></low>
+<low id = "GATEWAY-393"><weight change = "Default">0.03400</weight></low>
+<low id = "GATEWAY-933"><weight change = "Default">0.02183</weight></low>
+<low id = "GATEWAY-1359"><weight change = "Default">0.02063</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.01998</weight></low>
+<low id = "GATEWAY-852"><weight change = "Default">0.01820</weight></low>
+<low id = "GATEWAY-326"><weight change = "Default">0.01742</weight></low>
+<low id = "GATEWAY-938"><weight change = "Default">0.01706</weight></low>
+<low id = "GATEWAY-450"><weight change = "Default">0.01650</weight></low>
+<low id = "GATEWAY-694"><weight change = "Default">0.00935</weight></low>
+<low id = "GATEWAY-693"><weight change = "Default">0.00935</weight></low>
+<low id = "GATEWAY-695"><weight change = "Default">0.00917</weight></low>
+<low id = "GATEWAY-696"><weight change = "Default">0.00761</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.00332</weight></low>
+<low id = "GATEWAY-1124"><weight change = "Default">0.00285</weight></low>
+<low id = "GATEWAY-1121"><weight change = "Default">0.00283</weight></low>
+<low id = "GATEWAY-1047"><weight change = "Default">0.00268</weight></low>
+<low id = "GATEWAY-851"><weight change = "Default">0.00257</weight></low>
+<low id = "GATEWAY-1123"><weight change = "Default">0.00198</weight></low>
+<low id = "GATEWAY-853"><weight change = "Default">0.00193</weight></low>
+<low id = "GATEWAY-439"><weight change = "Default">0.00180</weight></low>
+<low id = "GATEWAY-440"><weight change = "Default">0.00179</weight></low>
+<low id = "GATEWAY-843"><weight change = "Default">0.00136</weight></low>
+<low id = "GATEWAY-850"><weight change = "Default">0.00133</weight></low>
+</high>
+<high id = "kW2-gov.hhs.fha.nhinc.webserviceproxy.WebServiceProxyHelper" freeze = "Not Satisfied">
+<low id = "GATEWAY-438"><weight change = "Default">0.10829</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.07952</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.04535</weight></low>
+<low id = "GATEWAY-851"><weight change = "Default">0.04360</weight></low>
+<low id = "GATEWAY-840"><weight change = "Default">0.04117</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.04022</weight></low>
+<low id = "GATEWAY-1124"><weight change = "Default">0.03892</weight></low>
+<low id = "GATEWAY-1121"><weight change = "Default">0.03872</weight></low>
+<low id = "GATEWAY-850"><weight change = "Default">0.03810</weight></low>
+<low id = "GATEWAY-1047"><weight change = "Default">0.03660</weight></low>
+<low id = "GATEWAY-635"><weight change = "Default">0.03442</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.03357</weight></low>
+<low id = "GATEWAY-853"><weight change = "Default">0.03272</weight></low>
+<low id = "GATEWAY-852"><weight change = "Default">0.03068</weight></low>
+<low id = "GATEWAY-1123"><weight change = "Default">0.02710</weight></low>
+<low id = "GATEWAY-838"><weight change = "Default">0.02185</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.01998</weight></low>
+<low id = "GATEWAY-299"><weight change = "Default">0.01897</weight></low>
+<low id = "GATEWAY-843"><weight change = "Default">0.01862</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.01425</weight></low>
+<low id = "GATEWAY-839"><weight change = "Default">0.01411</weight></low>
+<low id = "GATEWAY-474"><weight change = "Default">0.01320</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.01258</weight></low>
+<low id = "GATEWAY-844"><weight change = "Default">0.01172</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.00845</weight></low>
+</high>
+<high id = "kW3-gov.hhs.fha.nhinc.async.ElementBuilder" freeze = "Not Satisfied">
+<low id = "GATEWAY-1243"><weight change = "Default">0.13862</weight></low>
+<low id = "GATEWAY-848"><weight change = "Default">0.13648</weight></low>
+<low id = "GATEWAY-438"><weight change = "Default">0.09124</weight></low>
+<low id = "GATEWAY-299"><weight change = "Default">0.08438</weight></low>
+<low id = "GATEWAY-321"><weight change = "Default">0.07335</weight></low>
+<low id = "GATEWAY-843"><weight change = "Default">0.06478</weight></low>
+<low id = "GATEWAY-326"><weight change = "Default">0.04933</weight></low>
+<low id = "GATEWAY-302"><weight change = "Default">0.04535</weight></low>
+<low id = "GATEWAY-420"><weight change = "Default">0.04503</weight></low>
+<low id = "GATEWAY-1122"><weight change = "Default">0.03004</weight></low>
+<low id = "GATEWAY-1121"><weight change = "Default">0.02566</weight></low>
+<low id = "GATEWAY-1047"><weight change = "Default">0.02425</weight></low>
+<low id = "GATEWAY-840"><weight change = "Default">0.01997</weight></low>
+<low id = "GATEWAY-847"><weight change = "Default">0.01940</weight></low>
+<low id = "GATEWAY-306"><weight change = "Default">0.01918</weight></low>
+<low id = "GATEWAY-841"><weight change = "Default">0.01646</weight></low>
+<low id = "RMGMT-138"><weight change = "Default">0.01617</weight></low>
+<low id = "GATEWAY-1359"><weight change = "Default">0.01573</weight></low>
+<low id = "RMGMT-137"><weight change = "Default">0.01504</weight></low>
+<low id = "GATEWAY-842"><weight change = "Default">0.01064</weight></low>
+<low id = "GATEWAY-439"><weight change = "Default">0.00961</weight></low>
+<low id = "GATEWAY-440"><weight change = "Default">0.00956</weight></low>
+<low id = "GATEWAY-514"><weight change = "Default">0.00912</weight></low>
+<low id = "GATEWAY-442"><weight change = "Default">0.00663</weight></low>
+</high>
+</req>
