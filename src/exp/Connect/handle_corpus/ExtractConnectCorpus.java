@@ -8,12 +8,32 @@ import io.CorpusExtractor;
 public class ExtractConnectCorpus {
     public static void main(String[] args) {
         String[] changes = {
-                "2c30d2a811615a59a62474538aa7d29e8a6423d2",
-                "3ee520200c79e8ba3629f0c0acfc1e2a3307bf2f",
-                "843",
-                "847",
-                "843-1",
-                "847-1",
+//                "841",
+//                "841-1",
+//                "843",
+//                "843-1",
+//                "847",
+//                "847-1",
+//                "839",
+//                "839-1",
+//                "321",
+//                "321-1",
+//                "840",
+//                "840-1",
+//                "1121",
+//                "1121-1",
+//                "1123",
+//                "1123-1",
+//                "1241",
+//                "1241-1",
+//                "1242",
+//                "1242-1",
+//                "1243",
+//                "1243-1",
+//                "1244",
+//                "1244-1",
+                "1346",
+                "1346-1",
         };
         for (String vNumber : changes) {
             String projectName = "Connect";

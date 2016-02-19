@@ -21,7 +21,20 @@ public class Retro_retrieval {
     public static Result computeRetroResult(TextDataset textDataset, String path, String version, int reqCount) {
         SimilarityMatrix sm = RetroOutParser.createSimilarity(path, version, reqCount);
         SimilarityMatrix improved = improve(sm, textDataset, version);
+        MetricComputation metricComputation = new MetricComputation(improved, textDataset.getRtm());
+        Result result = metricComputation.compute(CutStrategy.CONSTANT_THRESHOLD);
+        result.setAlgorithmName("Retro vsm");
+        result.setCorrectImprovedTargetsList(new ArrayList<String>());
+        result.setAlgorithmParameters(new ArrayList<Pair<String, String>>());
+        result.setLog("");
 
+        return result;
+    }
+
+
+    public static Result computeRetroResultIR(TextDataset textDataset, String path, String version, int reqCount) {
+        SimilarityMatrix sm = RetroOutParser.createSimilarityIR(path, version, reqCount);
+        SimilarityMatrix improved = improveIR(sm, textDataset, version);
         MetricComputation metricComputation = new MetricComputation(improved, textDataset.getRtm());
         Result result = metricComputation.compute(CutStrategy.CONSTANT_THRESHOLD);
         result.setAlgorithmName("Retro vsm");
@@ -142,6 +155,82 @@ public class Retro_retrieval {
 
 
 //        System.out.println(matrix_target2req);
+        return matrix_vote;
+    }
+
+
+    public static SimilarityMatrix improveIR(SimilarityMatrix matrix, TextDataset textDataset, String projectName) {
+        SimilarityMatrix matrix_vote = new SimilarityMatrix();
+
+
+        SimilarityMatrix oracle = textDataset.getRtm();
+        ArtifactsCollection requirements = textDataset.getTargetCollection();
+        HashMap<String, List<String>> voteDetails = new HashMap<>();
+
+        HashMap<String, Double> reqScore = new HashMap<>();
+
+        for (String source : matrix.sourceArtifactsIds()) {
+            Map<String, Double> links = matrix.getLinksForSourceId(source);
+
+            for (String target : links.keySet()) {
+                if (links.get(target) > 0.0) {
+                    if (reqScore.containsKey(target)) {
+                        reqScore.put(target, reqScore.get(target) + matrix.getScoreForLink(source, target));
+                    } else {
+                        double score = matrix.getScoreForLink(source, target);
+                        reqScore.put(target, score);
+                    }
+
+
+                    if (oracle.isLinkAboveScaleThreshold(projectName, target)) {
+
+                        if (voteDetails.get(target) == null) {
+                            List<String> details = new ArrayList<>();
+                            details.add(source + " " + matrix.getScoreForLink(source, target));
+                            voteDetails.put(target, details);
+                        } else {
+                            List<String> details = voteDetails.get(target);
+                            details.add(source + " " + matrix.getScoreForLink(source, target));
+                            voteDetails.put(target, details);
+                        }
+                    }
+                }
+            }
+        }
+
+        LinksList linksList = new LinksList();
+        for (String req : reqScore.keySet()) {
+            linksList.add(new SingleLink(projectName, req, reqScore.get(req) * 1.0));
+        }
+
+        Collections.sort(linksList, Collections.reverseOrder());
+
+        for (SingleLink link : linksList) {
+            matrix_vote.addLink(link.getSourceArtifactId(), link.getTargetArtifactId(), link.getScore());
+        }
+
+        System.out.println("Vote Details");
+        for (SingleLink link : linksList) {
+            matrix_vote.addLink(link.getSourceArtifactId(), link.getTargetArtifactId(), link.getScore());
+
+            // Show Vote Details
+            if (oracle.isLinkAboveThreshold(link.getSourceArtifactId(), link.getTargetArtifactId())) {
+                String req = link.getTargetArtifactId();
+                StringBuilder sb = new StringBuilder();
+                sb.append(projectName + " " + req + " " + matrix_vote.getScoreForLink(projectName, req));
+                sb.append("\n");
+                sb.append("[\n");
+                for (String s : voteDetails.get(req)) {
+                    String[] tokens = s.split(" ");
+                    sb.append(tokens[0] + " " + req + " " + tokens[1]);
+                    sb.append("\n");
+                }
+                sb.append("]\n");
+                sb.append("\n");
+                System.out.println(sb.toString());
+            }
+        }
+
         return matrix_vote;
     }
 }

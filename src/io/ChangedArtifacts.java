@@ -16,6 +16,15 @@ public class ChangedArtifacts {
 
     private HashSet<String> wholeChangedArtifactList;
 
+    private HashSet<String> fieldsList;
+    private HashSet<String> methodsList;
+
+//    private HashSet<String> AddedFieldsList;
+//    private HashSet<String> AddedMethodsList;
+//    private HashSet<String> RemovedFieldsList;
+//    private HashSet<String> RemovedMethodsList;
+//    private HashSet<String> ModifiedMethodsList;
+
     public void parse(String path) {
         String input = _.readFile(path);
         String lines[] = input.split("\n");
@@ -25,13 +34,37 @@ public class ChangedArtifacts {
         modifiedArtifactList = new LinkedHashSet<>();
         wholeChangedArtifactList = new LinkedHashSet<>();
 
+        fieldsList = new LinkedHashSet<>();
+        methodsList = new LinkedHashSet<>();
+
         for (String line : lines) {
             if (line.startsWith("Added")) {
-                getAddedArtifactList().add(line.split(" ")[1]);
+                getAddedArtifactList().add(line.split(" ")[2]);
+
+                String type = line.split(" ")[1];
+                if (type.equals("Field")) {
+                    getFieldsList().add(line.split(" ")[2]);
+                } else if (type.equals("Method")) {
+                    getMethodsList().add(line.split(" ")[2]);
+                }
             } else if (line.startsWith("Removed")) {
-                getRemovedArtifactList().add(line.split(" ")[1]);
+                getRemovedArtifactList().add(line.split(" ")[2]);
+
+                String type = line.split(" ")[1];
+                if (type.equals("Field")) {
+                    getFieldsList().add(line.split(" ")[2]);
+                } else if (type.equals("Method")) {
+                    getMethodsList().add(line.split(" ")[2]);
+                }
             } else if (line.startsWith("Changed")) {
-                getModifiedArtifactList().add(line.split(" ")[1]);
+                getModifiedArtifactList().add(line.split(" ")[2]);
+
+                String type = line.split(" ")[1];
+                if (type.equals("Field")) {
+                    getFieldsList().add(line.split(" ")[2]);
+                } else if (type.equals("Method")) {
+                    getMethodsList().add(line.split(" ")[2]);
+                }
             }
         }
 
@@ -42,6 +75,34 @@ public class ChangedArtifacts {
 
     public boolean isAddedArtifact(String artifactName) {
         return getAddedArtifactList().contains(artifactName);
+    }
+
+    public boolean isAddedMethod(String artifactName) {
+        return getAddedArtifactList().contains(artifactName) && getMethodsList().contains(artifactName);
+    }
+
+    public boolean isRemovedMethod(String artifactName) {
+        return getRemovedArtifactList().contains(artifactName) && getMethodsList().contains(artifactName);
+    }
+
+    public boolean isModifiedMethod(String artifactName) {
+        return getModifiedArtifactList().contains(artifactName) && getMethodsList().contains(artifactName);
+    }
+
+    public boolean isAddedField(String artifactName) {
+        return getAddedArtifactList().contains(artifactName) && getFieldsList().contains(artifactName);
+    }
+
+    public boolean isRemovedField(String artifactName) {
+        return getRemovedArtifactList().contains(artifactName) && getFieldsList().contains(artifactName);
+    }
+
+    public boolean isField(String artifactName) {
+        return fieldsList.contains(artifactName);
+    }
+
+    public boolean isMethod(String artifactName) {
+        return methodsList.contains(artifactName);
     }
 
     public boolean isRemovedArtifact(String artifactName) {
@@ -74,8 +135,17 @@ public class ChangedArtifacts {
         return sb.toString();
     }
 
-    public HashSet<String> getAddedArtifactList() {
+    public HashSet<String> getAddedArtifactList()
+    {
         return addedArtifactList;
+    }
+
+    public HashSet<String> getFieldsList() {
+        return fieldsList;
+    }
+
+    public HashSet<String> getMethodsList() {
+        return methodsList;
     }
 
     public HashSet<String> getRemovedArtifactList() {
@@ -88,5 +158,45 @@ public class ChangedArtifacts {
 
     public HashSet<String> getWholeChangedArtifactList() {
         return wholeChangedArtifactList;
+    }
+
+    public HashSet<String> getAddedMethodsList() {
+        HashSet<String> result = new LinkedHashSet<>();
+        for (String str : addedArtifactList) {
+            if (isMethod(str)) {
+                result.add(str);
+            }
+        }
+        return result;
+    }
+
+    public HashSet<String> getRemovedMethodsList() {
+        HashSet<String> result = new LinkedHashSet<>();
+        for (String str : removedArtifactList) {
+            if (isMethod(str)) {
+                result.add(str);
+            }
+        }
+        return result;
+    }
+
+    public HashSet<String> getRemovedFieldsList() {
+        HashSet<String> result = new LinkedHashSet<>();
+        for (String str : removedArtifactList) {
+            if (isField(str)) {
+                result.add(str);
+            }
+        }
+        return result;
+    }
+
+    public HashSet<String> getAddedFieldsList() {
+        HashSet<String> result = new LinkedHashSet<>();
+        for (String str : addedArtifactList) {
+            if (isField(str)) {
+                result.add(str);
+            }
+        }
+        return result;
     }
 }

@@ -1,6 +1,8 @@
 package group;
 
 import io.ChangedArtifacts;
+import io.CorpusExtractor;
+import parser.FieldUseageParser;
 import relation.CallRelationGraph;
 import relation.graph.CodeVertex;
 import util.JavaElement;
@@ -18,10 +20,30 @@ public class ChangedArtifactsGrouper {
     private List<HashSet<String>> changedArtifactsGroup;
     private HashMap<String,Boolean> isMethodMerged;
 
+    private ChangedArtifacts changedMethods;
+    private ChangedArtifacts changedFields;
+
+    private CorpusExtractor newCorpus;
+    private CorpusExtractor oldCorpus;
+
     public ChangedArtifactsGrouper(ChangedArtifacts changedArtifacts, CallRelationGraph callGraphForChangedPart, Map<String, HashSet<String>> initialChangeRegion) {
         this.callGraphForChangedPart = callGraphForChangedPart;
         this.changedArtifacts = changedArtifacts;
         this.changedArtifactsGroup = new ArrayList<>();
+
+        groupChangedArtifact();
+    }
+
+    public ChangedArtifactsGrouper(ChangedArtifacts changedArtifacts, CallRelationGraph callGraphForChangedPart, Map<String, HashSet<String>> initialChangeRegion, CorpusExtractor newCorpus, CorpusExtractor oldCorpus) {
+        this.callGraphForChangedPart = callGraphForChangedPart;
+        this.changedArtifacts = changedArtifacts;
+        this.changedArtifactsGroup = new ArrayList<>();
+
+        this.newCorpus = newCorpus;
+        this.oldCorpus = oldCorpus;
+
+        this.newCorpus = newCorpus;
+
 
         groupChangedArtifact();
     }
@@ -32,27 +54,80 @@ public class ChangedArtifactsGrouper {
         HashSet<String> visitedVertexName = new HashSet<>();
 
         for (String vn : changedArtifacts.getWholeChangedArtifactList()) {
+            if (changedArtifacts.isMethod(vn)) {
+                if (!visitedVertexName.contains(vn)) {
+                    List<CodeVertex> vertexRegion = new ArrayList<>();
 
-            if (!visitedVertexName.contains(vn)) {
-                List<CodeVertex> vertexRegion = new ArrayList<>();
-
-                // The artifact has no call relation with others
-                if (callGraphForChangedPart.getCodeVertexByName(vn) != null) {
-                    callGraphForChangedPart.searhNeighbourConnectedGraphByCall(vn, vertexRegion);
-                    HashSet<String> subGraph = new HashSet<>();
-                    subGraph.add(vn);
-                    for (CodeVertex cv : vertexRegion) {
-                        visitedVertexName.add(cv.getName());
-                        subGraph.add(cv.getName());
+                    // The artifact has no call relation with others
+                    if (callGraphForChangedPart.getCodeVertexByName(vn) != null) {
+                        callGraphForChangedPart.searhNeighbourConnectedGraphByCall(vn, vertexRegion);
+                        HashSet<String> subGraph = new HashSet<>();
+                        subGraph.add(vn);
+                        for (CodeVertex cv : vertexRegion) {
+                            visitedVertexName.add(cv.getName());
+                            subGraph.add(cv.getName());
+                        }
+                        changedArtifactsGroup.add(subGraph);
+                    } else {
+                        HashSet<String> region = new HashSet<>();
+                        region.add(vn);
+                        changedArtifactsGroup.add(region);
                     }
-                    changedArtifactsGroup.add(subGraph);
-                } else {
-                    HashSet<String> region = new HashSet<>();
-                    region.add(vn);
-                    changedArtifactsGroup.add(region);
                 }
             }
         }
+
+//        FieldUseageParser fieldUseageParser_old = new FieldUseageParser(changedArtifacts.getRemovedFieldsList(), changedArtifacts.getRemovedMethodsList(), oldCorpus);
+//        FieldUseageParser fieldUseageParser_new = new FieldUseageParser(changedArtifacts.getAddedFieldsList(), changedArtifacts.getAddedMethodsList(), newCorpus);
+//
+//        Hashtable<String, Vector<String>> newFieldUseageGraphMap = fieldUseageParser_new.getFieldUseageRelationsList();
+//        Hashtable<String, Vector<String>> oldFieldUseageGraphMap = fieldUseageParser_old.getFieldUseageRelationsList();
+//
+//        Set<String> allocatedFieldsList = new LinkedHashSet<>();
+//
+//        for (int i = 0; i < changedArtifactsGroup.size(); i++) {
+//            Set<String> region = changedArtifactsGroup.get(i);
+//            Iterator it = region.iterator();
+//
+//            Set<String> fieldsInRegion = new LinkedHashSet<>();
+//            while (it.hasNext()) {
+//                String method = (String) it.next();
+//                Vector<String> usedField = new Vector<>();
+//                if (changedArtifacts.isAddedMethod(method)) {
+//                    usedField = newFieldUseageGraphMap.get(method);
+//                } else if (changedArtifacts.isRemovedMethod(method)) {
+//                    usedField = oldFieldUseageGraphMap.get(method);
+//                }
+//
+//                for (String field : usedField) {
+//                    fieldsInRegion.add(field);
+//                }
+//
+//            }
+//
+//            for (String field : fieldsInRegion) {
+//                region.add(field);
+//                allocatedFieldsList.add(field);
+//            }
+//
+//            for (String field : fieldsInRegion) {
+//                System.out.println(" field = " + field );
+//            }
+//        }
+//
+//        Set<String> fieldsNotAllocated = new LinkedHashSet<>();
+//        for (String f : changedArtifacts.getFieldsList()) {
+//            if (!allocatedFieldsList.contains(f)) {
+//                fieldsNotAllocated.add(f);
+//            }
+//        }
+//        HashSet<String> region = new HashSet<>();
+//        for (String f : fieldsNotAllocated) {
+//            region.add(f);
+//        }
+//        changedArtifactsGroup.add(region);
+//
+//        System.out.println("Not allocated fields: " + fieldsNotAllocated);
 
         //remove all method which is just changed in method body
         removeModifiedArtifacts();
@@ -75,6 +150,90 @@ public class ChangedArtifactsGrouper {
         removeRegionContainsOnlyOneJavaSpecificMethod();
 
         cleanEmptyRegion();
+
+        FieldUseageParser fieldUseageParser_old = new FieldUseageParser(changedArtifacts.getRemovedFieldsList(), changedArtifacts.getRemovedMethodsList(), oldCorpus);
+        FieldUseageParser fieldUseageParser_new = new FieldUseageParser(changedArtifacts.getAddedFieldsList(), changedArtifacts.getAddedMethodsList(), newCorpus);
+
+        Hashtable<String, Vector<String>> newFieldUseageGraphMap = fieldUseageParser_new.getFieldUseageRelationsList();
+        Hashtable<String, Vector<String>> oldFieldUseageGraphMap = fieldUseageParser_old.getFieldUseageRelationsList();
+
+        Set<String> allocatedFieldsList = new LinkedHashSet<>();
+
+        for (int i = 0; i < changedArtifactsGroup.size(); i++) {
+            Set<String> region = changedArtifactsGroup.get(i);
+            Iterator it = region.iterator();
+
+            Set<String> fieldsInRegion = new LinkedHashSet<>();
+            while (it.hasNext()) {
+                String method = (String) it.next();
+                Vector<String> usedField = new Vector<>();
+                if (changedArtifacts.isAddedMethod(method)) {
+                    usedField = newFieldUseageGraphMap.get(method);
+                } else if (changedArtifacts.isRemovedMethod(method)) {
+                    usedField = oldFieldUseageGraphMap.get(method);
+                }
+
+                for (String field : usedField) {
+                    fieldsInRegion.add(field);
+                }
+
+            }
+
+            for (String field : fieldsInRegion) {
+                region.add(field);
+                allocatedFieldsList.add(field);
+            }
+
+            for (String field : fieldsInRegion) {
+                System.out.println(" field = " + field );
+            }
+        }
+
+        Set<String> fieldsNotAllocated = new LinkedHashSet<>();
+        for (String f : changedArtifacts.getFieldsList()) {
+            if (!allocatedFieldsList.contains(f)) {
+                fieldsNotAllocated.add(f);
+            }
+        }
+
+
+        for (String f : fieldsNotAllocated) {
+            HashSet<String> region = new HashSet<>();
+            region.add(f);
+            changedArtifactsGroup.add(region);
+        }
+//
+//        System.out.println("Not allocated fields: " + fieldsNotAllocated);
+//
+////        Merge left single method(added or removed) into the existed group (the class that method belongs to appears most times)
+        mergeSingleMethodToExistedGroup();
+//
+////        merge the separated method which is added or removed
+        mergeSeparatedMethod();
+        cleanEmptyRegion();
+
+        HashSet<String> leftFieldIntoOneRegion = new HashSet<>();
+        Iterator iterator = changedArtifactsGroup.iterator();
+        while (iterator.hasNext()) {
+            HashSet<String> region = (HashSet<String>) iterator.next();
+
+            if (region.size() == 1) {
+                String content = null;
+                for (String s : region) {
+                    content = s;
+                }
+                if (fieldsNotAllocated.contains(content)) {
+                    leftFieldIntoOneRegion.add(content);
+                    iterator.remove();
+                }
+            }
+        }
+
+        if (leftFieldIntoOneRegion.size() > 0) {
+            if (changedArtifactsGroup.size() == 0) {
+                changedArtifactsGroup.add(leftFieldIntoOneRegion);
+            }
+        }
     }
 
     private void mergeSingleMethodToExistedGroup() {

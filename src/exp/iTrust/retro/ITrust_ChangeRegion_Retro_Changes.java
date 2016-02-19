@@ -19,6 +19,8 @@ public class ITrust_ChangeRegion_Retro_Changes {
         String retro_out_path_5 = "data/iTrust/retro/change_region/ch5.txt";
         String retro_out_path_6 = "data/iTrust/retro/change_region/ch6.txt";
         String retro_out_path_7 = "data/iTrust/retro/change_region/ch7.txt";
+        String retro_out_path_8 = "data/iTrust/retro/change_region/ch8.txt";
+        String retro_out_path_9 = "data/iTrust/retro/change_region/ch9.txt";
         String retro_out_path_10 = "data/iTrust/retro/change_region/ch10.txt";
 
         change_region_retro(ITrustSetting.iTrust_Change1_GroupedByJSEP,
@@ -36,6 +38,13 @@ public class ITrust_ChangeRegion_Retro_Changes {
                 ITrustSetting.iTrust_CleanedRequirement, ITrustSetting.iTrustOracleChange6, retro_out_path_6, "Change6");
         change_region_retro(ITrustSetting.iTrust_Change7_GroupedByJSEP,
                 ITrustSetting.iTrust_CleanedRequirement, ITrustSetting.iTrustOracleChange7, retro_out_path_7, "Change7");
+
+        change_region_retro(ITrustSetting.iTrust_Change8_GroupedByJSEP,
+                ITrustSetting.iTrust_CleanedRequirement, ITrustSetting.iTrustOracleChange8, retro_out_path_8, "Change8");
+        change_region_retro(ITrustSetting.iTrust_Change9_GroupedByJSEP,
+                ITrustSetting.iTrust_CleanedRequirement, ITrustSetting.iTrustOracleChange9, retro_out_path_9, "Change9");
+
+
         change_region_retro(ITrustSetting.iTrust_Change10_GroupedByJSEP,
                 ITrustSetting.iTrust_CleanedRequirement, ITrustSetting.iTrustOracleChange10, retro_out_path_10, "Change10");
     }
@@ -46,7 +55,8 @@ public class ITrust_ChangeRegion_Retro_Changes {
         TextDataset textDataset = new TextDataset(code,
                 req, oracle);
 
-        Result result = Retro_retrieval.computeRetroResult(textDataset, retro_out_path, version, 39);
+//        Result result = Retro_retrieval.computeRetroResult(textDataset, retro_out_path, version, 39);
+        Result result = Retro_retrieval.computeRetroResultIR(textDataset, retro_out_path, version, 39);
         result.showMatrix();
         result.showAveragePrecisionByRanklist();
         System.out.println("--------------------");

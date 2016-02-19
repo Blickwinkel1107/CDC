@@ -29,8 +29,7 @@ public class Aqualush_ChangeRegion_Retro_Changes {
         System.out.println("----------" + version + "----------");
         TextDataset textDataset = new TextDataset(code,
                 req, oracle);
-
-        Result result = Retro_retrieval.computeRetroResult(textDataset, retro_out_path, version, 337);
+        Result result = Retro_retrieval.computeRetroResultIR(textDataset, retro_out_path, version, 337);
         result.showMatrix();
         result.showAveragePrecisionByRanklist();
         System.out.println("--------------------");

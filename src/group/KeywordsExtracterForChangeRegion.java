@@ -32,9 +32,11 @@ public class KeywordsExtracterForChangeRegion {
     private String iTrustRegionForRelease = "/change_region_release";
 //
     private String exportDirPath;
-    private String methodChangeMappingPath = "data/iTrust/divide_group_to_change/method_for_change.txt";
+    private String methodChangeMappingPath = "data/iTrust/artifacts_for_changes.txt";
 
-    private JDiffChangesParser jDiffChangesParser;
+
+    private ChangedArtifacts changedMethods;
+    private ChangedArtifacts changedFields;
 
 
     public KeywordsExtracterForChangeRegion(ChangedArtifacts changedArtifacts, Map<String, HashSet<String>> changeRegions, List<HashSet<String>> changedArtifactsGroup, String newVersionName, String oldVersionName, CorpusExtractor newCorpus, CorpusExtractor oldCorpus, String exportDirPath, JDiffChangesParser jDiffChangesParser) {
@@ -51,7 +53,6 @@ public class KeywordsExtracterForChangeRegion {
         this.commitVersion = newVersionName;
         this.methodChangeMapping = (new DivideITrustGroupForEveryChange(methodChangeMappingPath)).methodForChange;
 
-        this.jDiffChangesParser = jDiffChangesParser;
 
         mergeChangeRegion();
         cleanDir();
@@ -59,14 +60,39 @@ public class KeywordsExtracterForChangeRegion {
     }
 
 
+    public KeywordsExtracterForChangeRegion(ChangedArtifacts changedArtifacts, Map<String, HashSet<String>> changeRegions, List<HashSet<String>> changedArtifactsGroup, String newVersionName, String oldVersionName, CorpusExtractor newCorpus, CorpusExtractor oldCorpus, String exportDirPath) {
+        this.changedArtifacts = changedArtifacts;
+        this.changeRegions = changeRegions;
+        this.changedArtifactsGroup = changedArtifactsGroup;
+        this.newCorpus = newCorpus;
+        this.oldCorpus = oldCorpus;
+
+        this.exportDirPath = exportDirPath;
+
+        this.finalRegionsList = new ArrayList<>();
+
+        this.commitVersion = newVersionName;
+        this.methodChangeMapping = (new DivideITrustGroupForEveryChange(methodChangeMappingPath)).methodForChange;
+
+        mergeChangeRegion();
+        cleanDir();
+        extractKeywords();
+    }
+
     private void mergeChangeRegion() {
         for (Set<String> changedGroup : changedArtifactsGroup) {
             Set<String> region = new LinkedHashSet<>();
             for (String changedArtifact : changedGroup) {
                 Set<String> regionForArtifact = changeRegions.get(changedArtifact);
-                for (String v : regionForArtifact) {
-                    region.add(v);
+//                System.out.println(" changedArtifact = " + changedArtifact );
+                if (regionForArtifact != null) {
+                    for (String v : regionForArtifact) {
+                        region.add(v);
+                    }
+                } else {
+                    region.add(changedArtifact);
                 }
+
             }
             finalRegionsList.add(region);
         }
@@ -87,15 +113,15 @@ public class KeywordsExtracterForChangeRegion {
                 String methodIdentifier = JavaElement.getIdentifier(v);
 
 
-                if (changedArtifacts.isAddedArtifact(v)) {
+                if (changedArtifacts.isAddedMethod(v)) {
                       String methodParameters = getMethodParameters(v, newCorpus);
                     String methodDoc = getMethodDoc(v, newCorpus);
 //                    sb.append(v);
 //                    sb.append("\n");
 //                    sb.append(fetchFileContent(v));
 //                    sb.append("\n");
-                    sb.append(packageIdentifier);
-                    sb.append("\n");
+//                    sb.append(packageIdentifier);
+//                    sb.append("\n");
                     sb.append(classIdentifier);
                     sb.append("\n");
                     sb.append(methodIdentifier);
@@ -111,17 +137,16 @@ public class KeywordsExtracterForChangeRegion {
                     recordWeighting(sb_source, methodParameters, ChangedType.Added, SourceEntityType.MethodParameters);
                     recordWeighting(sb_source, methodDoc, ChangedType.Added, SourceEntityType.MethodComments);
 
-                    AppendInvolvedFieldInRegion(containedFieldForRegion, v);
 
-                } else if (changedArtifacts.isRemovedArtifact(v)) {
+                } else if (changedArtifacts.isRemovedMethod(v)) {
                     String methodParameters = getMethodParameters(v, oldCorpus);
                     String methodDoc = getMethodDoc(v, oldCorpus);
 //                    sb.append(v);
 //                    sb.append("\n");
 //                    sb.append(fetchFileContent(v));
 //                    sb.append("\n");
-                    sb.append(packageIdentifier);
-                    sb.append("\n");
+//                    sb.append(packageIdentifier);
+//                    sb.append("\n");
                     sb.append(classIdentifier);
                     sb.append("\n");
                     sb.append(methodIdentifier);
@@ -138,15 +163,14 @@ public class KeywordsExtracterForChangeRegion {
                     recordWeighting(sb_source, methodDoc, ChangedType.Removed, SourceEntityType.MethodComments);
 
 
-                    AppendInvolvedFieldInRegion(containedFieldForRegion, v);
-                } else if (changedArtifacts.isModifiedArtifact(v)) {
+                } else if (changedArtifacts.isModifiedMethod(v)) {
                     String methodParameters = getMethodParameters(v, newCorpus);
 //                    sb.append(v);
 //                    sb.append("\n");
 //                    sb.append(methodParameters);
 //                    sb.append("\n");
-                    sb.append(packageIdentifier);
-                    sb.append("\n");
+//                    sb.append(packageIdentifier);
+//                    sb.append("\n");
                     sb.append(classIdentifier);
                     sb.append("\n");
                     sb.append(methodIdentifier);
@@ -158,16 +182,25 @@ public class KeywordsExtracterForChangeRegion {
                     recordWeighting(sb_source, classIdentifier, ChangedType.Modified, SourceEntityType.ClassName);
                     recordWeighting(sb_source, methodIdentifier, ChangedType.Modified, SourceEntityType.MethodName);
                     recordWeighting(sb_source, methodParameters, ChangedType.Modified, SourceEntityType.MethodParameters);
-                    AppendInvolvedFieldInRegion(containedFieldForRegion, v);
+                } else if (changedArtifacts.isAddedField(v)) {
+                    String fieldIdentifier = JavaElement.getIdentifier(v);
+//                    sb.append(fieldIdentifier);
+                    String className = JavaElement.getIdentifier(JavaElement.getClassName(v));
+                    sb.append(className + " " + fieldIdentifier);
+                    sb.append(" ");
+                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Added, SourceEntityType.FieldName);
+                } else if (changedArtifacts.isRemovedField(v)) {
+                    String fieldIdentifier = JavaElement.getIdentifier(v);
+//                    sb.append(fieldIdentifier);
+                    String className = JavaElement.getIdentifier(JavaElement.getClassName(v));
+                    sb.append(className + " " + fieldIdentifier);
+                    sb.append(" ");
+                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Removed, SourceEntityType.FieldName);
                 } else {
 
                     String methodParameters = getMethodParameters(v, newCorpus);
-//                    sb.append(v);
+//                    sb.append(packageIdentifier);
 //                    sb.append("\n");
-//                    sb.append(methodParameters);
-//                    sb.append("\n");
-                    sb.append(packageIdentifier);
-                    sb.append("\n");
                     sb.append(classIdentifier);
                     sb.append("\n");
                     sb.append(methodIdentifier);
@@ -202,21 +235,24 @@ public class KeywordsExtracterForChangeRegion {
             }
 
             //Maybe we need add fields involved in method region
-            for (String fieldName : containedFieldForRegion) {
-                String fieldIdentifier = JavaElement.getIdentifier(fieldName);
-                sb.append(fieldIdentifier);
-                sb.append(" ");
-                if (jDiffChangesParser.isAddedField(fieldName)) {
-                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Added, SourceEntityType.FieldName);
-                } else if (jDiffChangesParser.isRemovedField(fieldName)) {
-                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Removed, SourceEntityType.FieldName);
-                }
-            }
+//            for (String fieldName : containedFieldForRegion) {
+//                String fieldIdentifier = JavaElement.getIdentifier(fieldName);
+//                sb.append(fieldIdentifier);
+//
+//                System.out.println(" fieldIdentifier = " + fieldIdentifier );
+//                sb.append(" ");
+//                if (jDiffChangesParser.isAddedField(fieldName)) {
+//                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Added, SourceEntityType.FieldName);
+//                } else if (jDiffChangesParser.isRemovedField(fieldName)) {
+//                    recordWeighting(sb_source, fieldIdentifier, ChangedType.Removed, SourceEntityType.FieldName);
+//                }
+//            }
 
             sb.append("\n");
 
             if (!sb.toString().equals("")) {
-                _.writeFile(ArtifactPreprocessor.handleJavaFile(ArtifactPreprocessor.handleJSEPCodeChange(sb.toString())), exportDirPath + "/" + commitVersion + "/Group" + regionNumber + ".txt");
+//                _.writeFile(ArtifactPreprocessor.handleJavaFile(ArtifactPreprocessor.handleJSEPCodeChange(sb.toString())), exportDirPath + "/" + commitVersion + "/Group" + regionNumber + ".txt");
+                _.writeFile(ArtifactPreprocessor.handleJavaFile(ArtifactPreprocessor.handleJSEPCodeChange(sb.toString())), exportDirPath + "/" + commitVersion + "/Group" + regionNumber);
                 _.writeFile(ArtifactPreprocessor.handleJSEPCodeChange(sb.toString()), exportDirPath + "_not_preprocessed/" + commitVersion + "/Group" + regionNumber + ".txt");
                 _.writeFile(ArtifactPreprocessor.handleJavaFile(ArtifactPreprocessor.handleJSEPCodeChange(sb.toString())), groupsFromReleasePath + "/" + commitVersion + "/Group" + regionNumber + ".txt");
                 _.writeFile(sb_source.toString(), exportDirPath + "_weighting/" + commitVersion + "/Group" + regionNumber + ".txt");
@@ -250,18 +286,6 @@ public class KeywordsExtracterForChangeRegion {
                 sb.append(sourceEntityType);
                 sb.append("\n");
             }
-        }
-    }
-
-    private void AppendInvolvedFieldInRegion(Set<String> containedFieldForRegion, String v) {
-        Set<String> fieldInfo = new LinkedHashSet<>();
-        if (changedArtifacts.isAddedArtifact(v)) {
-            fieldInfo = jDiffChangesParser.involvedChangedFieldInMethod(v, "Added");
-        } else if (changedArtifacts.isRemovedArtifact(v)) {
-            fieldInfo = jDiffChangesParser.involvedChangedFieldInMethod(v, "Removed");
-        }
-        for (String fieldName : fieldInfo) {
-            containedFieldForRegion.add(fieldName);
         }
     }
 

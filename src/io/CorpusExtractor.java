@@ -25,8 +25,7 @@ public class CorpusExtractor {
     public String extractedClassMethodPath;
     public String extractedClassMethodFullNamePath;
 
-
-
+    public String extractedFieldsPath;
 
     public CorpusExtractor() {
     }
@@ -44,6 +43,7 @@ public class CorpusExtractor {
 
         this.extractedClassMethodPath = extractedCorpusPath + "/ClassMethod/" + versionName;
         this.extractedClassMethodFullNamePath = extractedCorpusPath + "/ClassMethodFullName/" + versionName;
+        this.extractedFieldsPath = extractedCorpusPath + "/Field/" + versionName;
     }
 
     public void process() {
@@ -58,6 +58,8 @@ public class CorpusExtractor {
         ExtractClassMethod classMethod = new ExtractClassMethod(codePath, extractedClassMethodPath);
 
         ExtractClassMethodFullName classMethodFullName = new ExtractClassMethodFullName(codePath, extractedClassMethodFullNamePath);
+        ExtractField extractFields = new ExtractField(codePath, extractedFieldsPath);
+
     }
 
     public Set<String> getFieldsInClass(String className) {

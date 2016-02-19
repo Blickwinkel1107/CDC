@@ -311,6 +311,15 @@ public class JavaStructParser {
 
             String filePath = classDir.getPath() + "/" + packageName + "." + className + ".txt";
             _.writeFile(sb.toString(), filePath);
+        } else if (type.equals(ParserType.Field)) {
+
+            for (JField f : jFieldList) {
+                StringBuffer sb = new StringBuffer();
+
+                String fieldName = packageName + "." + className + "." + f.getFieldName();
+                String filePath = classDir.getPath() + "/" + fieldName + ".txt";
+                _.writeFile(sb.toString(), filePath);
+            }
         }
     }
 

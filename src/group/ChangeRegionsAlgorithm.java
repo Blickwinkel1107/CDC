@@ -3,7 +3,6 @@ package group;
 import core.type.Granularity;
 import io.ChangedArtifacts;
 import io.CorpusExtractor;
-import parser.JDiffChangesParser;
 import relation.CallRelationGraph;
 import relation.RelationInfo;
 
@@ -20,7 +19,6 @@ public class ChangeRegionsAlgorithm {
     private CorpusExtractor oldCorpus;
     private CorpusExtractor newCorpus;
     private String exportGroupPath;
-    private JDiffChangesParser jDiffChangesParser;
 
     public ChangeRegionsAlgorithm(String oldVersionName, String newVersionName, String oldVersionJar, String newVersionJar, String changesPath, Granularity granularity, CorpusExtractor oldCorpus, CorpusExtractor newCorpus, String exportGroupPath, String changesFromJDiff) {
         this.oldVersionName = oldVersionName;
@@ -32,13 +30,24 @@ public class ChangeRegionsAlgorithm {
         this.oldCorpus = oldCorpus;
         this.newCorpus= newCorpus;
         this.exportGroupPath = exportGroupPath;
-        this.jDiffChangesParser = new JDiffChangesParser(changesFromJDiff, newCorpus, oldCorpus);
+    }
+
+    public ChangeRegionsAlgorithm(String oldVersionName, String newVersionName, String oldVersionJar, String newVersionJar, String changesPath, Granularity granularity, CorpusExtractor oldCorpus, CorpusExtractor newCorpus, String exportGroupPath) {
+        this.oldVersionName = oldVersionName;
+        this.newVersionName = newVersionName;
+        this.oldVersionJar = oldVersionJar;
+        this.newVersionJar = newVersionJar;
+        this.changesPath = changesPath;
+        this.granularity = granularity;
+        this.oldCorpus = oldCorpus;
+        this.newCorpus= newCorpus;
+        this.exportGroupPath = exportGroupPath;
     }
 
     public void process() {
 
         // Use changed call graph without modified artifacts
-        RelationInfo relationInfoForChangedPart = new RelationInfo(false, oldVersionJar, newVersionJar,
+        RelationInfo relationInfoForChangedPart = new RelationInfo(false, oldVersionJar, newVersionJar, oldCorpus, newCorpus,
                 changesPath, granularity);
 
         // Use changed call graph with modified artifacts
@@ -47,7 +56,7 @@ public class ChangeRegionsAlgorithm {
 //        relationInfoForInitialRegion.setPruning(0.3);
 
         CallRelationGraph callGraphForChangedPart = new CallRelationGraph(relationInfoForChangedPart);
-        double thresholdForInitialRegion = 0.3;
+        double thresholdForInitialRegion = 0.35;
         RelationInfo oldRelationInfo = new RelationInfo(oldVersionJar, granularity, false);
         oldRelationInfo.setPruning(thresholdForInitialRegion);
         RelationInfo newRelationInfo = new RelationInfo(newVersionJar, granularity, false);
@@ -61,10 +70,10 @@ public class ChangeRegionsAlgorithm {
 
         InitialRegionFetcher fetcher = new InitialRegionFetcher(changedArtifacts, newCallGraph, oldCallGraph);
 
-//        ChangedArtifactsGrouper_II grouper = new ChangedArtifactsGrouper_II(changedArtifacts, callGraphForChangedPart, fetcher.getChangeRegion(), newCallGraph, oldCallGraph);
-        ChangedArtifactsGrouper grouper = new ChangedArtifactsGrouper(changedArtifacts, callGraphForChangedPart, fetcher.getChangeRegion());
+//        ChangedArtifactsGrouper grouper = new ChangedArtifactsGrouper(changedArtifacts, callGraphForChangedPart, fetcher.getChangeRegion());
+        ChangedArtifactsGrouper grouper = new ChangedArtifactsGrouper(changedArtifacts, callGraphForChangedPart, fetcher.getChangeRegion(), newCorpus, oldCorpus);
 
-        KeywordsExtracterForChangeRegion keywordsExtracter = new KeywordsExtracterForChangeRegion(changedArtifacts, fetcher.getChangeRegion(), grouper.getChangedArtifactsGroup(), newVersionName, oldVersionName, newCorpus, oldCorpus, exportGroupPath, jDiffChangesParser);
+        KeywordsExtracterForChangeRegion keywordsExtracter = new KeywordsExtracterForChangeRegion(changedArtifacts, fetcher.getChangeRegion(), grouper.getChangedArtifactsGroup(), newVersionName, oldVersionName, newCorpus, oldCorpus, exportGroupPath);
         keywordsExtracter.showFinalRegion();
     }
 }

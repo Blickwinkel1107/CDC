@@ -25,7 +25,11 @@ public class ArtifactPreprocessor {
         str = CleanUp.chararctorClean(str);
         str = CamelCase.split(str);
         str = SentenceSplitter.process(str);
-        str = CleanUp.lengthFilter(str, 3);
+
+        //!!!
+//        str = CleanUp.lengthFilter(str, 3);
+
+
         str = CleanUp.tolowerCase(str);
         str = Snowball.stemming(str);
         str = Stopwords.remover(str, AppConfigure.Stopwords);

@@ -5,5 +5,5 @@ package parser;
  */
 public enum ParserType {
     MethodIdentifier, MethodBody, ClassIdentifier,MethodComment,ClassComment,ClassField,
-    MethodParameter,ClassMethod,PackageClass, ClassMethodFullName;
+    MethodParameter,ClassMethod,PackageClass, ClassMethodFullName, Field;
 }

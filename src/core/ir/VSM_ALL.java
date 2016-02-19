@@ -190,7 +190,6 @@ public class VSM_ALL implements IRModel {
                 sims.addLink(link.getSourceArtifactId(), link.getTargetArtifactId(), link.getScore());
                 if (link.getScore() > 0.0) {
                     String id = link.getSourceArtifactId() + "#" + link.getTargetArtifactId();
-//                    System.out.println(termScoreInfo.get(id));
                 }
             }
         }

@@ -231,9 +231,11 @@ public class CallRelationGraph extends RelationGraph {
         for (CodeEdge codeEdge : dirGraph.getEdges()) {
             CallEdge callEdge = (CallEdge) codeEdge;
             callEdgeScoreMap.put(callEdge, computeCallEdgeScore(callEdge));
+
+//            System.out.println(computeCallEdgeScore(callEdge));
         }
 
-        normalizeCallEdge(callEdgeScoreMap);
+//        normalizeCallEdge(callEdgeScoreMap);
 
 
         for (CodeEdge callEdge : callEdgeScoreMap.keySet()) {
@@ -246,7 +248,7 @@ public class CallRelationGraph extends RelationGraph {
     private double computeCallEdgeScore(CallEdge callEdge) {
         int callerOutNum = (dirGraph.getOutEdges(callEdge.getSource())).size();
         int calleeInNum = (dirGraph.getInEdges(callEdge.getTarget())).size();
-        return callEdge.getCallRelationSize() * 1.0 / (callerOutNum + calleeInNum);
+        return callEdge.getCallRelationSize() * 2.0 / (callerOutNum + calleeInNum);
     }
 
     public void searhNeighbourConnectedGraphByCall(String vertexName, List<CodeVertex> connectedVertexes) {

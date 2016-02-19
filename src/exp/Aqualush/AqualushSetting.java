@@ -9,10 +9,32 @@ public class AqualushSetting {
     public static final String Diff_Change7 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change7.txt";
     public static final String Diff_Change99 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change99.txt";
 
-    public static final String MethodChanges4 = "data/Aqualush/ExtractedCorpus/MethodBody/method_changes_change4_change3.txt";
-    public static final String MethodChanges5 = "data/Aqualush/ExtractedCorpus/MethodBody/method_changes_change5_change4.txt";
-    public static final String MethodChanges7 = "data/Aqualush/ExtractedCorpus/MethodBody/method_changes_change7_change6.txt";
-    public static final String MethodChanges99 = "data/Aqualush/ExtractedCorpus/MethodBody/method_changes_change99_change0.txt";;
+    public static final String MethodDiff_Change4 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change4.txt";
+    public static final String MethodDiff_Change5 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change5.txt";
+    public static final String MethodDiff_Change7 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change7.txt";
+    public static final String MethodDiff_Change99 = "data/Aqualush/ExtractedCorpus/MethodBody/diff_change99.txt";
+
+    public static final String FieldDiff_Change4 = "data/Aqualush/ExtractedCorpus/Field/diff_fields_change4.txt";
+    public static final String FieldDiff_Change5 = "data/Aqualush/ExtractedCorpus/Field/diff_fields_change5.txt";
+    public static final String FieldDiff_Change7 = "data/Aqualush/ExtractedCorpus/Field/diff_fields_change7.txt";
+    public static final String FieldDiff_Change99 = "data/Aqualush/ExtractedCorpus/Field/diff_fields_change99.txt";
+
+
+    public static final String MethodChanges4 = "data/Aqualush/diff_info/method_changes_change4_change3.txt";
+    public static final String MethodChanges5 = "data/Aqualush/diff_info/method_changes_change5_change4.txt";
+    public static final String MethodChanges7 = "data/Aqualush/diff_info/method_changes_change7_change6.txt";
+    public static final String MethodChanges99 = "data/Aqualush/diff_info/method_changes_change99_change0.txt";;
+
+    public static final String FieldChanges4 = "data/Aqualush/diff_info/field_changes_change4_change3.txt";
+    public static final String FieldChanges5 = "data/Aqualush/diff_info/field_changes_change5_change4.txt";
+    public static final String FieldChanges7 = "data/Aqualush/diff_info/field_changes_change7_change6.txt";
+    public static final String FieldChanges99 = "data/Aqualush/diff_info/field_changes_change99_change0.txt";;
+
+
+    public static final String ArtifactChanges4 = "data/Aqualush/diff_info/changes_change4_change3.txt";
+    public static final String ArtifactChanges5 = "data/Aqualush/diff_info/changes_change5_change4.txt";
+    public static final String ArtifactChanges7 = "data/Aqualush/diff_info/changes_change7_change6.txt";;
+    public static final String ArtifactChanges99 = "data/Aqualush/diff_info/changes_change99_change0.txt";;
 
     public static final String Change3_JAR = "data/Aqualush/jar/change3.jar";
     public static final String Change4_JAR = "data/Aqualush/jar/change4.jar";

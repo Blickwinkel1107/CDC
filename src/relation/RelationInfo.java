@@ -7,7 +7,9 @@ import edu.uci.ics.jung.algorithms.scoring.PageRankWithPriors;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import io.ChangedArtifacts;
+import io.CorpusExtractor;
 import org.apache.commons.collections15.functors.MapTransformer;
+import parser.FieldUseageParser;
 import relation.info.CallRelation;
 import relation.info.CallRelationList;
 import relation.info.RelationPair;
@@ -83,10 +85,6 @@ public class RelationInfo implements Serializable {
                 artName = extractClassName(name);
             } else if (granularity.equals(Granularity.METHOD)) {
                 artName = name;
-            }
-
-            if (artName.equals("edu.ncsu.csc.itrust.action.UpdateReasonCodeListAction.<init>")) {
-                System.out.println("haha");
             }
 
             if (isInternalPackage(artName) ) {
@@ -186,12 +184,12 @@ public class RelationInfo implements Serializable {
     }
 
     // not concerned modified vertexes
-    public RelationInfo(Boolean concernedModifiedArtifact, String oldVersionCallRelationSource, String newVersionCallRelationSource, String changedClassPath, Granularity granularity) {
+    public RelationInfo(Boolean concernedModifiedArtifact, String oldVersionCallRelationSource, String newVersionCallRelationSource, CorpusExtractor oldCorpus, CorpusExtractor newCorpus, String changedArtifactsPath, Granularity granularity) {
         this.granularity = granularity;
         artifactNames = new LinkedHashSet<>();
 
         ChangedArtifacts parser = new ChangedArtifacts();
-        parser.parse(changedClassPath);
+        parser.parse(changedArtifactsPath);
         this.changedArtifactList = parser.getWholeChangedArtifactList();
 
         this.changedArtifacts = parser;
@@ -206,7 +204,7 @@ public class RelationInfo implements Serializable {
             oldCallGraphMap = JCallGraph.callGraphMap;
 
             JCallGraph newCallGraph = new JCallGraph(newVersionCallRelationSource);
-             newCallGraphMap = JCallGraph.callGraphMap;
+            newCallGraphMap = JCallGraph.callGraphMap;
         } else if (oldFile.isDirectory() && newFile.isDirectory()) {
             ProjectCallRelationsStaticAnalyser analyserOld = new ProjectCallRelationsStaticAnalyser(oldVersionCallRelationSource);
             oldCallGraphMap = analyserOld.getCallGraphMap();
@@ -229,7 +227,7 @@ public class RelationInfo implements Serializable {
             }
 
             if (isInternalPackageAndTarget(artName)) {
-                    artifactNames.add(artName);
+                artifactNames.add(artName);
             }
             Vector<String> callees = oldCallGraphMap.get(name);
             for (String callee : callees) {
@@ -239,7 +237,7 @@ public class RelationInfo implements Serializable {
                     artName = callee;
                 }
 
-                if (isInternalPackageAndTarget(artName) ) {
+                if (isInternalPackageAndTarget(artName)) {
                     artifactNames.add(artName);
                 }
             }
@@ -253,10 +251,7 @@ public class RelationInfo implements Serializable {
                 artName = name;
             }
 
-            if (artName.equals("ui.SetMaxLevelScrnState.setCurrentItem")) {
-                System.out.println("hahaa");
-            }
-            if (isInternalPackageAndTarget(artName) ) {
+            if (isInternalPackageAndTarget(artName)) {
                 artifactNames.add(artName);
             }
             Vector<String> callees = newCallGraphMap.get(name);
@@ -283,6 +278,37 @@ public class RelationInfo implements Serializable {
             id++;
         }
 
+        // check if there are some vertexes has no call neighbours, so they are not added into the graph
+        for (String artifact : changedArtifacts.getWholeChangedArtifactList()) {
+            if (changedArtifacts.isAddedMethod(artifact) || changedArtifacts.isRemovedMethod(artifact)) {
+//            if (changedArtifacts.isAddedArtifact(artifact) || changedArtifacts.isRemovedArtifact(artifact)) {
+                if (!vertexNameIdMap.containsKey(artifact)) {
+                    System.out.println(("Not considering such element " + artifact));
+                    vertexIdNameMap.put(id, artifact);
+                    vertexNameIdMap.put(artifact, id);
+                    id++;
+                }
+            }
+        }
+
+
+
+//        for (String field : changedArtifacts.getFieldsList()) {
+//            if (!vertexNameIdMap.containsKey(field)) {
+//                vertexIdNameMap.put(id, field);
+//                vertexNameIdMap.put(field, id);
+//                id++;
+//            } else {
+//                throw new IllegalArgumentException("Method and Field has the same name: " + field);
+//            }
+//        }
+
+//        FieldUseageParser fieldUseageParser_old = new FieldUseageParser(changedArtifacts.getRemovedFieldsList(), changedArtifacts.getRemovedMethodsList(), oldCorpus);
+//        FieldUseageParser fieldUseageParser_new = new FieldUseageParser(changedArtifacts.getAddedFieldsList(), changedArtifacts.getAddedMethodsList(), newCorpus);
+//
+//        Hashtable<String, Vector<String>> newFieldUseageGraphMap = fieldUseageParser_new.getFieldUseageRelationsList();
+//        Hashtable<String, Vector<String>> oldFieldUseageGraphMap = fieldUseageParser_old.getFieldUseageRelationsList();
+
         CallRelationList callRelationList = new CallRelationList();
 
         for (String caller : oldCallGraphMap.keySet()) {
@@ -303,7 +329,7 @@ public class RelationInfo implements Serializable {
                     calleeName = callee;
                 }
 
-                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName)) ) {
+                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName))) {
                     CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
                     if (!callRelationList.contains(cr)) {
                         callRelationList.add(cr);
@@ -331,7 +357,7 @@ public class RelationInfo implements Serializable {
                     calleeName = callee;
                 }
 
-                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName)) ) {
+                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName))) {
                     CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
                     if (!callRelationList.contains(cr)) {
                         callRelationList.add(cr);
@@ -339,6 +365,58 @@ public class RelationInfo implements Serializable {
                 }
             }
         }
+
+//        for (String caller : newFieldUseageGraphMap.keySet()) {
+//            Vector<String> callees = newFieldUseageGraphMap.get(caller);
+//
+//            String callerName = null;
+//            if (granularity.equals(Granularity.CLASS)) {
+//                callerName = extractClassName(caller);
+//            } else if (granularity.equals(Granularity.METHOD)) {
+//                callerName = caller;
+//            }
+//
+//            for (String callee : callees) {
+//
+//                String calleeName = null;
+//                if (granularity.equals(Granularity.CLASS)) {
+//                    calleeName = extractClassName(callee);
+//                } else if (granularity.equals(Granularity.METHOD)) {
+//                    calleeName = callee;
+//                }
+//
+//                CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+//                if (!callRelationList.contains(cr)) {
+//                    callRelationList.add(cr);
+//                }
+//            }
+//        }
+//
+//        for (String caller : oldFieldUseageGraphMap.keySet()) {
+//            Vector<String> callees = oldFieldUseageGraphMap.get(caller);
+//
+//            String callerName = null;
+//            if (granularity.equals(Granularity.CLASS)) {
+//                callerName = extractClassName(caller);
+//            } else if (granularity.equals(Granularity.METHOD)) {
+//                callerName = caller;
+//            }
+//
+//            for (String callee : callees) {
+//
+//                String calleeName = null;
+//                if (granularity.equals(Granularity.CLASS)) {
+//                    calleeName = extractClassName(callee);
+//                } else if (granularity.equals(Granularity.METHOD)) {
+//                    calleeName = callee;
+//                }
+//
+//                CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+//                if (!callRelationList.contains(cr)) {
+//                    callRelationList.add(cr);
+//                }
+//            }
+//        }
 
         pairCallRelationListMap = new LinkedHashMap<>();
         callRelationPairList = new ArrayList<>();
@@ -357,7 +435,7 @@ public class RelationInfo implements Serializable {
             String relationIdFormat = callerId + " " + calleeId;
 
             RelationPair rp = new RelationPair(callerId, calleeId);
-
+//            System.out.println(cr);
             if (callerId != calleeId) {
                 if (pairCallRelationListMap.containsKey(rp)) {
                     CallRelationList callRelationListForPair = pairCallRelationListMap.get(rp);
@@ -377,19 +455,6 @@ public class RelationInfo implements Serializable {
             } else {
 //                    System.out.println(relationIdFormat + " class call relation is duplicated.");
             }
-        }
-
-        // check if there are some vertexes has no call neighbours, so they are not added into the graph
-        for (String artifact : changedArtifacts.getWholeChangedArtifactList()) {
-            if (changedArtifacts.isAddedArtifact(artifact) || changedArtifacts.isRemovedArtifact(artifact)) {
-                if (!vertexNameIdMap.containsKey(artifact)) {
-                    System.out.println(("Not considering such element " + artifact));
-                    vertexIdNameMap.put(id, artifact);
-                    vertexNameIdMap.put(artifact, id);
-                    id++;
-                }
-            }
-
         }
     }
 
@@ -467,9 +532,6 @@ public class RelationInfo implements Serializable {
                 artName = name;
             }
 
-            if (artName.equals("ui.SetMaxLevelScrnState.setCurrentItem")) {
-                System.out.println("hahaa");
-            }
             if (isInternalPackageAndTarget(artName) ) {
                 artifactNames.add(artName);
             }
@@ -495,6 +557,16 @@ public class RelationInfo implements Serializable {
             vertexIdNameMap.put(id, name);
             vertexNameIdMap.put(name, id);
             id++;
+        }
+
+        for (String field : changedArtifacts.getFieldsList()) {
+            if (!vertexNameIdMap.containsKey(field)) {
+                vertexIdNameMap.put(id, field);
+                vertexNameIdMap.put(field, id);
+                id++;
+            } else {
+                throw new IllegalArgumentException("Method and Field has the same name: " + field);
+            }
         }
 
         CallRelationList callRelationList = new CallRelationList();
@@ -595,7 +667,7 @@ public class RelationInfo implements Serializable {
 
         // check if there are some vertexes has no call neighbours, so they are not added into the graph
         for (String artifact : changedArtifacts.getWholeChangedArtifactList()) {
-            if (changedArtifacts.isAddedArtifact(artifact) || changedArtifacts.isRemovedArtifact(artifact)) {
+            if (changedArtifacts.isAddedMethod(artifact) || changedArtifacts.isRemovedMethod(artifact)) {
                 if (!vertexNameIdMap.containsKey(artifact)) {
                     System.out.println(("Not considering such element " + artifact));
                     vertexIdNameMap.put(id, artifact);
@@ -721,7 +793,8 @@ public class RelationInfo implements Serializable {
                     if (isCompletedGraph) {
                         return true;
                     } else {
-                        if (changedArtifactList.contains(target)) {
+                        if (changedArtifacts.isMethod(target)) {
+//                        if (changedArtifactList.contains(target)) {
                             return true;
                         } else {
                             return false;
@@ -746,7 +819,8 @@ public class RelationInfo implements Serializable {
                     if (isCompletedGraph) {
                         return true;
                     } else {
-                        if (changedArtifactList.contains(target)) {
+                        if (changedArtifacts.isMethod(target)) {
+//                        if (changedArtifactList.contains(target)) {
                             return true;
                         } else {
                             return false;
@@ -788,6 +862,266 @@ public class RelationInfo implements Serializable {
 
     public boolean isPruning() {
         return isPruning;
+    }
+
+
+    // concerned added, removed, modified vertexes
+    public RelationInfo(String oldVersionPath, String newVersionPath, CorpusExtractor oldCorpus, CorpusExtractor newCorpus, String changedClassPath, Granularity granularity, boolean isCompletedGraph) {
+        this.granularity = granularity;
+        artifactNames = new LinkedHashSet<>();
+        this.isCompletedGraph = isCompletedGraph;
+//        this.modifiedArtifactList = ChangesParser.fetchArtifacts(changedClassPath);
+
+        ChangedArtifacts parser = new ChangedArtifacts();
+        parser.parse(changedClassPath);
+        this.changedArtifactList = parser.getWholeChangedArtifactList();
+        this.changedArtifacts = parser;
+
+        JCallGraph oldCallGraph = new JCallGraph(oldVersionPath);
+        Hashtable<String, Vector<String>> oldCallGraphMap = JCallGraph.callGraphMap;
+
+        JCallGraph newCallGraph = new JCallGraph(newVersionPath);
+        Hashtable<String, Vector<String>> newCallGraphMap = JCallGraph.callGraphMap;
+
+        for (String name : oldCallGraphMap.keySet()) {
+            String artName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                artName = extractClassName(name);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                artName = name;
+            }
+
+            if (isInternalPackageAndTarget(artName) ) {
+                artifactNames.add(artName);
+            }
+            Vector<String> callees = oldCallGraphMap.get(name);
+            for (String callee : callees) {
+                if (granularity.equals(Granularity.CLASS)) {
+                    artName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    artName = callee;
+                }
+
+                if (isInternalPackageAndTarget(artName) ) {
+                    artifactNames.add(artName);
+                }
+            }
+        }
+
+        for (String name : newCallGraphMap.keySet()) {
+            String artName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                artName = extractClassName(name);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                artName = name;
+            }
+
+            if (isInternalPackageAndTarget(artName) ) {
+                artifactNames.add(artName);
+            }
+            Vector<String> callees = newCallGraphMap.get(name);
+            for (String callee : callees) {
+                if (granularity.equals(Granularity.CLASS)) {
+                    artName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    artName = callee;
+                }
+
+                if (isInternalPackageAndTarget(artName)) {
+                    artifactNames.add(artName);
+                }
+            }
+        }
+
+        vertexIdNameMap = new LinkedHashMap<>();
+        vertexNameIdMap = new LinkedHashMap<>();
+
+        FieldUseageParser fieldUseageParser_old = new FieldUseageParser(changedArtifacts.getRemovedFieldsList(), changedArtifacts.getRemovedMethodsList(), oldCorpus);
+        FieldUseageParser fieldUseageParser_new = new FieldUseageParser(changedArtifacts.getAddedFieldsList(), changedArtifacts.getAddedMethodsList(), newCorpus);
+
+        Hashtable<String, Vector<String>> newFieldUseageGraphMap = fieldUseageParser_new.getFieldUseageRelationsList();
+        Hashtable<String, Vector<String>> oldFieldUseageGraphMap = fieldUseageParser_old.getFieldUseageRelationsList();
+
+
+        int id = 1;
+        for (String name : artifactNames) {
+            vertexIdNameMap.put(id, name);
+            vertexNameIdMap.put(name, id);
+            id++;
+        }
+
+        // check if there are some vertexes has no call neighbours, so they are not added into the graph
+        for (String artifact : changedArtifacts.getWholeChangedArtifactList()) {
+            if (changedArtifacts.isAddedMethod(artifact) || changedArtifacts.isRemovedMethod(artifact)) {
+                if (!vertexNameIdMap.containsKey(artifact)) {
+                    System.out.println(("Not considering such element " + artifact));
+                    vertexIdNameMap.put(id, artifact);
+                    vertexNameIdMap.put(artifact, id);
+                    id++;
+                }
+            }
+
+        }
+
+        for (String field : changedArtifacts.getFieldsList()) {
+            if (!vertexNameIdMap.containsKey(field)) {
+                vertexIdNameMap.put(id, field);
+                vertexNameIdMap.put(field, id);
+                id++;
+            } else {
+                throw new IllegalArgumentException("Method and Field has the same name: " + field);
+            }
+        }
+
+
+
+        CallRelationList callRelationList = new CallRelationList();
+
+        for (String caller : oldCallGraphMap.keySet()) {
+            Vector<String> callees = oldCallGraphMap.get(caller);
+
+            String callerName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                callerName = extractClassName(caller);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                callerName = caller;
+            }
+
+            for (String callee : callees) {
+                String calleeName = null;
+                if (granularity.equals(Granularity.CLASS)) {
+                    calleeName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    calleeName = callee;
+                }
+
+                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName)) ) {
+                    CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+                    if (!callRelationList.contains(cr)) {
+                        callRelationList.add(cr);
+                    }
+                }
+            }
+        }
+
+        for (String caller : newCallGraphMap.keySet()) {
+            Vector<String> callees = newCallGraphMap.get(caller);
+
+            String callerName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                callerName = extractClassName(caller);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                callerName = caller;
+            }
+
+            for (String callee : callees) {
+
+                String calleeName = null;
+                if (granularity.equals(Granularity.CLASS)) {
+                    calleeName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    calleeName = callee;
+                }
+
+                if ((isInternalPackageAndTarget(callerName) && isInternalPackageAndTarget(calleeName)) ) {
+                    CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+                    if (!callRelationList.contains(cr)) {
+                        callRelationList.add(cr);
+                    }
+                }
+            }
+        }
+
+        for (String caller : newFieldUseageGraphMap.keySet()) {
+            Vector<String> callees = newFieldUseageGraphMap.get(caller);
+
+            String callerName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                callerName = extractClassName(caller);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                callerName = caller;
+            }
+
+            for (String callee : callees) {
+
+                String calleeName = null;
+                if (granularity.equals(Granularity.CLASS)) {
+                    calleeName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    calleeName = callee;
+                }
+
+                CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+                if (!callRelationList.contains(cr)) {
+                    callRelationList.add(cr);
+                }
+            }
+        }
+
+        for (String caller : oldFieldUseageGraphMap.keySet()) {
+            Vector<String> callees = oldFieldUseageGraphMap.get(caller);
+
+            String callerName = null;
+            if (granularity.equals(Granularity.CLASS)) {
+                callerName = extractClassName(caller);
+            } else if (granularity.equals(Granularity.METHOD)) {
+                callerName = caller;
+            }
+
+            for (String callee : callees) {
+
+                String calleeName = null;
+                if (granularity.equals(Granularity.CLASS)) {
+                    calleeName = extractClassName(callee);
+                } else if (granularity.equals(Granularity.METHOD)) {
+                    calleeName = callee;
+                }
+
+                CallRelation cr = new CallRelation(callerName, calleeName, caller, callee);
+                if (!callRelationList.contains(cr)) {
+                    callRelationList.add(cr);
+                }
+            }
+        }
+
+        pairCallRelationListMap = new LinkedHashMap<>();
+        callRelationPairList = new ArrayList<>();
+        List<String> callRelationById = new ArrayList<>();
+
+        for (CallRelation cr : callRelationList) {
+            String caller;
+            String callee;
+
+            caller = cr.getCallerClass();
+            callee = cr.getCalleeClass();
+
+            Integer callerId = vertexNameIdMap.get(caller);
+            Integer calleeId = vertexNameIdMap.get(callee);
+
+            String relationIdFormat = callerId + " " + calleeId;
+
+            RelationPair rp = new RelationPair(callerId, calleeId);
+
+            if (callerId != calleeId) {
+                if (pairCallRelationListMap.containsKey(rp)) {
+                    CallRelationList callRelationListForPair = pairCallRelationListMap.get(rp);
+                    callRelationListForPair.add(cr);
+                    pairCallRelationListMap.put(rp, callRelationListForPair);
+                } else {
+                    CallRelationList callRelationListForPair = new CallRelationList();
+                    callRelationListForPair.add(cr);
+                    pairCallRelationListMap.put(rp, callRelationListForPair);
+                }
+            }
+
+            if (!callRelationById.contains(relationIdFormat) && callerId != calleeId) {
+
+                callRelationById.add(relationIdFormat);
+                getCallRelationPairList().add(rp);
+            } else {
+//                    System.out.println(relationIdFormat + " class call relation is duplicated.");
+            }
+        }
     }
 
 //    public void setCompletedGraph(boolean isCompletedGraph) {

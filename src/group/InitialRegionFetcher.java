@@ -14,7 +14,6 @@ public class InitialRegionFetcher {
 
     private CallRelationGraph newCallGraph;
     private CallRelationGraph oldCallGraph;
-    private CallRelationGraph changedPartCallGraph;
 
     private Map<String, HashSet<String>> regionForArtifactsList;
 
@@ -29,12 +28,13 @@ public class InitialRegionFetcher {
     }
 
     private void findInitialRegion() {
-        findInitialRegionForEachVertex(changedArtifacts.getAddedArtifactList(), newCallGraph);
-        findInitialRegionForEachVertex(changedArtifacts.getRemovedArtifactList(), oldCallGraph);
+        findInitialRegionForEachVertex(changedArtifacts.getAddedMethodsList(), changedArtifacts.getAddedFieldsList(),newCallGraph);
+        findInitialRegionForEachVertex(changedArtifacts.getRemovedMethodsList(), changedArtifacts.getRemovedFieldsList(), oldCallGraph);
+
     }
 
-    private void findInitialRegionForEachVertex(Set<String> vertexes, CallRelationGraph callRelationGraph) {
-        for (String vertexName : vertexes) {
+    private void findInitialRegionForEachVertex(Set<String> vertexesForMethod, Set<String> vertexesForField, CallRelationGraph callRelationGraph) {
+        for (String vertexName : vertexesForMethod) {
             List<CodeVertex> subGraphVertexes = new ArrayList<>();
             callRelationGraph.searhNeighbourConnectedGraphByCall(vertexName, subGraphVertexes);
 
@@ -45,6 +45,12 @@ public class InitialRegionFetcher {
             }
             regionForArtifactsList.put(vertexName, region);
         }
+//
+//        for (String vertexName : vertexesForField) {
+//            HashSet<String> region = new HashSet<>();
+//            region.add(vertexName);
+//            regionForArtifactsList.put(vertexName, region);
+//        }
     }
 
     public Map<String, HashSet<String>> getChangeRegion() {

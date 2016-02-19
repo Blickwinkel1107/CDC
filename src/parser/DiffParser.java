@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 /**
  * Created by niejia on 15/11/8.
  */
-public class MethodBodyDiff {
+public class DiffParser {
 
-    private final String[] content;
+    private String[] content = null;
     private final String extendName;
 
     private HashSet<String> addedFileNames;
@@ -30,7 +30,7 @@ public class MethodBodyDiff {
      * @param oldVersionName
      * @param extendName
      */
-    public MethodBodyDiff(String diffFilePath,String newVersionName, String oldVersionName, String extendName) {
+    public DiffParser(String diffFilePath, String newVersionName, String oldVersionName, String extendName) {
         String input = _.readFile(diffFilePath);
         if (input == null) {
             throw new NoSuchFieldError("Can't find diff file.");
@@ -50,6 +50,20 @@ public class MethodBodyDiff {
 
         parser();
         exportChanges();
+    }
+
+    public DiffParser(String methodDiffPath, String fieldDiffPath, String newVersionName, String oldVersionName, String extendName) {
+
+        this.exportPath = (new File(methodDiffPath)).getParentFile().getParentFile().getParentFile().getPath();
+        this.extendName = extendName;
+        this.newVersionName = newVersionName;
+        this.oldVersionName = oldVersionName;
+
+        StringBuffer mergedSB = new StringBuffer();
+        parser(_.readFile(methodDiffPath).split("\n"), mergedSB, "Method");
+        parser(_.readFile(fieldDiffPath).split("\n"), mergedSB, "Field");
+
+        _.writeFile(mergedSB.toString(), exportPath + "/diff_info/" +"changes_" + newVersionName + "_" + oldVersionName + ".txt");
     }
 
     private void exportChanges() {
@@ -75,6 +89,7 @@ public class MethodBodyDiff {
         }
 
         _.writeFile(sb.toString(), exportPath + "/method_changes_" + newVersionName + "_" + oldVersionName + ".txt");
+//        _.writeFile(sb.toString(), exportPath +"/diff_info/"+ "changes_" + newVersionName + "_" + oldVersionName + ".txt");
     }
 
     public void parser() {
@@ -91,6 +106,50 @@ public class MethodBodyDiff {
                 changedFileNames.add(fileName.split("." + extendName)[0]);
             }
         }
+    }
+
+    public void parser(String[] content, StringBuffer mergedSB, String type) {
+
+        StringBuffer sb = new StringBuffer();
+        HashSet<String> addedFileNames = new HashSet<>();
+        HashSet<String> removedFileNames = new HashSet<>();
+        HashSet<String> changedFileNames = new HashSet<>();
+
+        for (int i = 0; i < content.length; i++) {
+            String line = content[i];
+            if (line.startsWith("Only in " + newVersionName)) {
+                String fileName = fetchFileName(line);
+                addedFileNames.add(fileName.split("." + extendName)[0]);
+            } else if (line.startsWith("Only in " + oldVersionName)) {
+                String fileName = fetchFileName(line);
+                removedFileNames.add(fileName.split("." + extendName)[0]);
+            } else if (line.startsWith("diff")) {
+                String fileName = fetchFileName(line);
+                changedFileNames.add(fileName.split("." + extendName)[0]);
+            }
+        }
+
+        for (String f : addedFileNames) {
+            sb.append("Added " + type + " " + f);
+            sb.append("\n");
+        }
+        sb.append("\n");
+
+        sb.append("\n");
+        for (String f : removedFileNames) {
+            sb.append("Removed " + type + " "+ f);
+            sb.append("\n");
+        }
+        sb.append("\n");
+
+        sb.append("\n");
+        for (String f : changedFileNames) {
+            sb.append("Changed " + type + " " + f);
+            sb.append("\n");
+        }
+
+        mergedSB.append(sb.toString());
+        _.writeFile(sb.toString(), exportPath + "/diff_info/" + type + "_changes_" + newVersionName + "_" + oldVersionName + ".txt");
     }
 
     public String fetchFileName(String str) {
@@ -165,7 +224,7 @@ public class MethodBodyDiff {
 
     public static void main(String[] args) {
         String diffFile = "data/iTrust/ExtractedCorpus/MethodBody/diff_change99.txt";
-        MethodBodyDiff parser = new MethodBodyDiff(diffFile, "v11", "v10", "java");
+        DiffParser parser = new DiffParser(diffFile, "v11", "v10", "java");
         parser.parser();
 
         System.out.println(parser);

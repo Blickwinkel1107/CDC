@@ -68,7 +68,7 @@ public class ITrustSetting {
 
     public static String GroupByMethodPath = "data/iTrust/grouped_by_method";
 
-    public static final String iTrust_ChangeRegionPath = "data/iTrust/grouped/change_region_release";
+    public static final String iTrust_ChangeRegionPath = "data/iTrust/grouped/change_region";
     public static final String iTrust_JSEPPath = "data/iTrust/grouped/jsep";
 
 
@@ -166,4 +166,8 @@ public class ITrustSetting {
     public static String iTrustOracleChange10 = "data/iTrust/oracle/iTrustOracleChange10.txt";
     public static String iTrustOracleChange13 = "data/iTrust/oracle/iTrustOracleChange13.txt";
 
+
+    public static final String ArtifactChangesV11 = "data/iTrust/diff_info/changes_v11_v10.txt";;
+    public static final String MethodDiff_ChangeV11 = "data/iTrust/ExtractedCorpus/MethodBody/diff_methods_v11.txt";
+    public static final String FieldDiff_ChangeV11 = "data/iTrust/ExtractedCorpus/Field/diff_fields_v11.txt";
 }
